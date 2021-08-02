@@ -9,7 +9,7 @@ from typing import Literal
 
 pd.set_option("display.max_columns", None)
 
-class MySodaClient:
+class SodaClient:
     """
     Client for downloading and storing traffic crashes and traffic crashes 
     people raw data from Chicago Data Portal.
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     print("Starting program...\n")
     datasets = ["crashes", "people"]
     for dataset in datasets:
-        soda_client = MySodaClient()
+        soda_client = SodaClient()
         soda_client.collect_data(dataset)
 
     print("Program ended.")
