@@ -62,51 +62,74 @@ def convert_df_columns(
         elif conversion_type == "integer":
             df[col] = pd.to_numeric(df[col], downcast="integer")
         elif conversion_type == "string":
-            df[col] = df_crashes[col].astype("string")
+            df[col] = df[col].astype("string")
+
+def transform_and_store_data(dbname, query, col_types_dict, table_name):
+    print(f"Retrieving raw {table_name} data from database...")
+    df = get_sql_data(db_name=dbname, query=query)
+    print(f"Transforming {table_name} data...")
+    for dtype, cols in col_types_dict.items():
+        convert_df_columns(dtype, df, cols)
+
+    alchemy_engine = make_alchemy_engine(dbname=dbname)
+    print(f"Writing {table_name} data to database...")
+    df.to_sql(
+        name=table_name, con=alchemy_engine, if_exists="replace", 
+        index=False)
+    alchemy_engine.dispose()
+    return None
 
 
 if __name__ == '__main__':
     print("Starting program...")
 
+    # Defining SQL queries
     crashes_raw_query = """
         SELECT *
         FROM crashes_raw;
         """
-    print("Retrieving crashes data from database...")
-    df_crashes = get_sql_data(
-        db_name="chi-traffic-accidents", query=crashes_raw_query)
+    people_raw_query = """
+        SELECT *
+        FROM people_raw;
+        """
+
+    # Defining column datatypes
+    crashes_col_types = {
+        "datetime": ["crash_date", "date_police_notified"],
+        "integer": ["posted_speed_limit", "lane_cnt", "street_no", 
+            "beat_of_occurrence", "num_units", "injuries_total", 
+            "injuries_fatal", "injuries_incapacitating", 
+            "injuries_non_incapacitating", "injuries_reported_not_evident", 
+            "injuries_no_indication", "injuries_unknown", "crash_hour", 
+            "crash_day_of_week", "crash_month"],
+        "float": ["latitude", "longitude"],
+        "string": ["crash_record_id", "rd_no", "crash_date_est_i", 
+            "traffic_control_device", "device_condition", "weather_condition", 
+            "lighting_condition", "first_crash_type", "trafficway_type", 
+            "alignment", "roadway_surface_cond", "road_defect", "report_type", 
+            "crash_type", "intersection_related_i", "hit_and_run_i", "damage", 
+            "prim_contributory_cause", "sec_contributory_cause", 
+            "street_direction", "street_name", "photos_taken_i", 
+            "statements_taken_i", "dooring_i", "work_zone_i", "work_zone_type", 
+            "workers_present_i", "most_severe_injury"]}
+    people_col_types = {
+        "datetime": ["crash_date"],
+        "integer": ["age"],
+        "float": ["bac_result_value"],
+        "string": ["person_id", "person_type", "crash_record_id", "rd_no", 
+            "vehicle_id", "seat_no", "city", "state", "zipcode", "sex", 
+            "drivers_license_state", "drivers_license_class", 
+            "safety_equipment", "airbag_deployed", "ejection", 
+            "injury_classification", "hospital", "ems_agency", "ems_run_no", 
+            "driver_action", "driver_vision", "physical_condition", 
+            "pedpedal_location", "bac_result", "cell_phone_use"]}
+
+    # Transforming and storing data
+    transform_and_store_data(
+        dbname="chi-traffic-accidents", query=crashes_raw_query, 
+        col_types_dict=crashes_col_types, table_name="crashes")
+    transform_and_store_data(dbname="chi-traffic-accidents", 
+        query=people_raw_query, col_types_dict=people_col_types, 
+        table_name="people")
     
-    # Defining crashes columns to transform datatype
-    cols_datetime = ["crash_date", "date_police_notified"]
-    cols_int = ["posted_speed_limit", "lane_cnt", "street_no", 
-        "beat_of_occurrence", "num_units", "injuries_total", "injuries_fatal", 
-        "injuries_incapacitating", "injuries_non_incapacitating", 
-        "injuries_reported_not_evident", "injuries_no_indication", 
-        "injuries_unknown", "crash_hour", "crash_day_of_week", "crash_month"]
-    cols_float = ["latitude", "longitude"]
-    cols_str = ["crash_record_id", "rd_no", "crash_date_est_i", 
-        "traffic_control_device", "device_condition", "weather_condition", 
-        "lighting_condition", "first_crash_type", "trafficway_type", 
-        "alignment", "roadway_surface_cond", "road_defect", "report_type", 
-        "crash_type", "intersection_related_i", "hit_and_run_i", "damage", 
-        "prim_contributory_cause", "sec_contributory_cause", 
-        "street_direction", "street_name", "photos_taken_i", 
-        "statements_taken_i", "dooring_i", "work_zone_i", "work_zone_type", 
-        "workers_present_i", "most_severe_injury"]
-
-    cols_all = [cols_datetime, cols_int, cols_float, cols_str]
-    cols_conversions = ["datetime", "float", "integer", "string"]
-
-    print("Transforming crashes dataframe...")
-    for conv, cols in zip(cols_conversions, cols_all):
-        convert_df_columns(conv, df_crashes, cols)
-    
-    # Writing transformed crashes data to database
-    alchemy_engine = make_alchemy_engine(dbname="chi-traffic-accidents")
-    print("Writing crashes table to database...")
-    df_crashes.to_sql(
-        name="crashes", con=alchemy_engine, if_exists="replace", index=False)
-
-
-
     print("Program complete.")
