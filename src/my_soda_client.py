@@ -42,10 +42,7 @@ class MySodaClient:
         soda_client = Socrata("data.cityofchicago.org", self.app_token)
 
         print("Retrieving data from API...")
-        # TODO Update this code for production
-        # raw_data = soda_client.get_all(self.dataset_code, content_type="json")
-        raw_data = soda_client.get(
-            self.dataset_code, limit=10_000, content_type="json")
+        raw_data = soda_client.get_all(self.dataset_code, content_type="json")
         df_data = pd.DataFrame.from_records(raw_data)
 
         print("Closing SODA API connection...")
@@ -62,10 +59,8 @@ class MySodaClient:
         alchemy_engine = create_engine(engine_string)
 
         print("Writing to database...")
-        # TODO Update this code for production
-        # df.to_sql(
-        #     self.sql_table, alchemy_engine, index=False, if_exists="replace")
-        print("**Skipping writing to database...**")
+        df.to_sql(
+            self.sql_table, alchemy_engine, index=False, if_exists="replace")
         
         print("Closing database connection...")
         alchemy_engine.dispose()
@@ -91,8 +86,6 @@ class MySodaClient:
         df_data = self.get_raw_data()
         if self.dataset == "crashes":
             df_data = df_data.drop(columns=["location"])
-        # TODO Delete print() when done with debugging
-        print(df_data.shape)
 
         self.store_raw_data(df_data)
         print(f"Completed collecting the {self.dataset} dataset...\n")
