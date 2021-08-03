@@ -79,11 +79,13 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
         "workers_present_i", "most_severe_injury", "injuries_fatal", 
         'injuries_incapacitating', 'injuries_non_incapacitating',
        'injuries_reported_not_evident', 'injuries_no_indication', 
-       'injuries_unknown', "latitude", "longitude"]
+       'injuries_unknown', "latitude", "longitude", "crash_type", "damage"]
         df.drop(columns=drop_cols, inplace=True)
 
         # Removing NaN for total injuries
         df = df.loc[~df["injuries_total"].isna(), :]
+
+        df["has_injuries"] = np.where(df["injuries_total"]==0, False, True)
     elif table_name == "people":
         drop_cols = ["cell_phone_use", "bac_result_value", "bac_result", 
         "ems_run_no", "ems_agency", "hospital", "injury_classification", 
