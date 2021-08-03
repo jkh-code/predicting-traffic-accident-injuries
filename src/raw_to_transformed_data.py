@@ -71,6 +71,7 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
     for dtype, cols in col_types_dict.items():
         convert_df_columns(dtype, df, cols)
     
+    # Dropping columns
     if table_name == "crashes":
         drop_cols = ["rd_no", "crash_date_est_i", "private_property_i", 
         "date_police_notified", "sec_contributory_cause", "street_no", 
@@ -86,6 +87,9 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
         "ems_run_no", "ems_agency", "hospital", "injury_classification", 
         "zipcode", "crash_date", "rd_no"]
         df.drop(columns=drop_cols, inplace=True)
+    
+    # Removing NaN for total injuries
+    df = df.loc[~df["injuries_total"].isna(), :]
 
     alchemy_engine = make_alchemy_engine(dbname=dbname)
     print(f"Writing {table_name} data to database...")
