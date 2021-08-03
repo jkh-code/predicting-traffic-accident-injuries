@@ -70,6 +70,22 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
     print(f"Transforming {table_name} data...")
     for dtype, cols in col_types_dict.items():
         convert_df_columns(dtype, df, cols)
+    
+    if table_name == "crashes":
+        drop_cols = ["rd_no", "crash_date_est_i", "private_property_i", 
+        "date_police_notified", "sec_contributory_cause", "street_no", 
+        "street_name", "beat_of_occurrence", "photos_taken_i", 
+        "statements_taken_i", "dooring_i", "work_zone_i", "work_zone_type", 
+        "workers_present_i", "most_severe_injury", "injuries_fatal", 
+        'injuries_incapacitating', 'injuries_non_incapacitating',
+       'injuries_reported_not_evident', 'injuries_no_indication', 
+       'injuries_unknown', "latitude", "longitude"]
+        df.drop(columns=drop_cols, inplace=True)
+    elif table_name == "people":
+        drop_cols = ["cell_phone_use", "bac_result_value", "bac_result", 
+        "ems_run_no", "ems_agency", "hospital", "injury_classification", 
+        "zipcode", "crash_date", "rd_no"]
+        df.drop(columns=drop_cols, inplace=True)
 
     alchemy_engine = make_alchemy_engine(dbname=dbname)
     print(f"Writing {table_name} data to database...")
