@@ -23,6 +23,7 @@ def injury_vs_no_injury_plot(
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
+    ax.set_xticklabels(["No", "Yes"])
     ax.legend(title=None)
     return fig, ax
 
