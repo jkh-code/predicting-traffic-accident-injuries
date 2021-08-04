@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.dummy import DummyRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     # Create X and y
     y = df_crashes.pop("injuries_total")
     X = df_crashes.copy()
-    # del df_crashes
+    del df_crashes
 
     # Transforming X and y for modeling
     numeric_cols = ["posted_speed_limit", "num_units", "crash_hour"]
@@ -50,4 +51,12 @@ if __name__ == '__main__':
         [X[numeric_cols], pd.DataFrame(
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
-    print(X)
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+    # Baseline model
+    model_dum = DummyRegressor(strategy="mean")
+    model_dum.fit(X_train, y_train)
+    y_pred = model_dum.predict(X_test)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    print(f"RMSE: {rmse:.4f}")
