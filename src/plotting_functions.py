@@ -44,6 +44,22 @@ def injury_vs_no_injury_plot(
         ax.legend(title=None, loc="upper left", bbox_to_anchor=(1, 1))
     return fig, ax
 
+def limit_injury_category_plot() -> None:
+    # fig, ax = plt.subplots(figsize=(10, 7))
+    # perc = (
+    #     (df_crashes.groupby(["injury_category", "first_crash_type"])["crash_record_id"]
+    #         .count()) 
+    #     / (df_crashes.groupby(["injury_category"])["crash_record_id"].count()))
+    # perc = (perc.reset_index()
+    #     .set_index("injury_category")
+    #     .pivot(columns="first_crash_type", values="crash_record_id")
+    #     .fillna(0.0))
+    # perc.loc[:, (perc > 0.05).any().values].plot(kind="bar", ax=ax)
+    # ax.set_title("Percent of Accidents by Top 8 First Crash Types")
+    # ax.set_xlabel("Injury Category")
+    # ax.set_ylabel("Percent of Group")
+    # ax.legend(title=None, loc="upper left", bbox_to_anchor=(1, 1))
+    return None
 
 if __name__ == "__main__":
     pass
