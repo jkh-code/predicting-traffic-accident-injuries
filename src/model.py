@@ -39,4 +39,15 @@ if __name__ == '__main__':
     # Transforming X and y for modeling
     numeric_cols = ["posted_speed_limit", "num_units", "crash_hour"]
     category_cols = X.columns.difference(numeric_cols)
-    print(category_cols)
+    
+    encoder = OneHotEncoder(drop=None, sparse=True)
+    onehot_crashes = encoder.fit_transform(X[category_cols])
+    matrix_cols = []
+    for col, ele in zip(category_cols, encoder.categories_):
+        for e in ele:
+            matrix_cols.append(col + "_" + e.lower())
+    X = pd.concat(
+        [X[numeric_cols], pd.DataFrame(
+            onehot_crashes.toarray(), columns=matrix_cols)], 
+        axis=1)
+    print(X)
