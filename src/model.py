@@ -3,7 +3,7 @@ import numpy as np
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.dummy import DummyRegressor
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
@@ -58,5 +58,12 @@ if __name__ == '__main__':
     model_dum = DummyRegressor(strategy="mean")
     model_dum.fit(X_train, y_train)
     y_pred = model_dum.predict(X_test)
-    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    print(f"RMSE: {rmse:.4f}")
+    rmse_dum = np.sqrt(mean_squared_error(y_test, y_pred))
+    print(f"RMSE dum: {rmse_dum:.4f}")
+
+    # Linear Regression model
+    model_lr = LinearRegression()
+    model_lr.fit(X_train, y_train)
+    y_pred_lr = model_lr.predict(X_test)
+    rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
+    print(f"RMSE lr : {rmse_lr:.4f}")
