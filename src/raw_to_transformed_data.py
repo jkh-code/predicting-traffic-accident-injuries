@@ -86,6 +86,16 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
         df = df.loc[~df["injuries_total"].isna(), :]
 
         df["has_injuries"] = np.where(df["injuries_total"]==0, False, True)
+        df["crash_day_of_week"] = pd.Categorical(
+            df["crash_date"].dt.day_name(),
+            categories=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", 
+                "Friday", "Saturday"],
+            ordered=True)
+        df["crash_month"] = pd.Categorical(
+            df["crash_date"].dt.month_name(),
+            categories=['January', 'February', 'March', 'April', 'May', 'June', 
+            'July', 'August', 'September', 'October', 'November', 'December'],
+            ordered=True)
     elif table_name == "people":
         drop_cols = ["cell_phone_use", "bac_result_value", "bac_result", 
         "ems_run_no", "ems_agency", "hospital", "injury_classification", 
@@ -149,8 +159,9 @@ if __name__ == '__main__':
     transform_and_store_data(
         dbname="chi-traffic-accidents", query=crashes_raw_query, 
         col_types_dict=crashes_col_types, table_name="crashes")
-    transform_and_store_data(dbname="chi-traffic-accidents", 
-        query=people_raw_query, col_types_dict=people_col_types, 
-        table_name="people")
+    # TODO Uncomment following block for production
+    # transform_and_store_data(dbname="chi-traffic-accidents", 
+        # query=people_raw_query, col_types_dict=people_col_types, 
+        # table_name="people")
     
     print("Program complete.")
