@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     # Linear Regression model
     model_lr = LinearRegression()
-    model_lr.fit(X_train, y_train)
-    y_pred_lr = model_lr.predict(X_test)
-    rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
-    print(f"RMSE lr : {rmse_lr:.4f}")
+    scores_lr = cross_val_score(
+        model_lr, X_train, y_train, scoring="neg_mean_squared_error", cv=5)
+    avg_rmse_lr = np.mean(np.sqrt(-scores_lr))
+    print(f"AVG RMSE lr : {avg_rmse_lr:.4f}")
