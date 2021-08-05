@@ -197,7 +197,7 @@ if __name__ == '__main__':
         df_people, "ejection", 
         ("PARTIALLY EJECTED", "TOTALLY EJECTED", "TRAPPED/EXTRICATED"), 
         {"PARTIALLY EJECTED": "num_partially_ejected", 
-            "TOTALLY EJECTED": "num_partially_ejected",
+            "TOTALLY EJECTED": "num_totally_ejected",
             "TRAPPED/EXTRICATED": "num_extricated"})
     df_temp = (
         df_crashes.loc[:, ["crash_record_id", "posted_speed_limit"]]
@@ -205,6 +205,10 @@ if __name__ == '__main__':
             .merge(df_ej, how="left", on="crash_record_id"))
     df_temp = df_temp.drop(columns=["posted_speed_limit"])
     df_temp = df_temp.fillna(0)
+    df_temp["num_ejected"] = (
+        df_temp["num_partially_ejected"] + df_temp["num_totally_ejected"])
+    df_temp = df_temp.drop(
+        columns=["num_partially_ejected", "num_totally_ejected"])
     df_crashes = df_crashes.merge(df_temp, how="left", on="crash_record_id")
     alchemy_engine = make_alchemy_engine(dbname="chi-traffic-accidents")
     print("Writing joined table to database...")
