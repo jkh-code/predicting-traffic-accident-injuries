@@ -191,4 +191,4 @@ if __name__ == '__main__':
 
     # Create logistic model
     create_logistic_model(
-        X_train, y_train, X_test, y_test, run=True, save=True)
+        X_train, y_train, X_test, y_test, run=False, save=True)
