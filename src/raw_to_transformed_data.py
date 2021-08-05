@@ -85,7 +85,7 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
         # Removing NaN for total injuries
         df = df.loc[~df["injuries_total"].isna(), :]
 
-        df["has_injuries"] = np.where(df["injuries_total"]==0, False, True)
+        df["has_injuries"] = np.where(df["injuries_total"]==0, 0, 1)
         df["crash_day_of_week"] = pd.Categorical(
             df["crash_date"].dt.day_name(),
             categories=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", 
@@ -134,6 +134,10 @@ if __name__ == '__main__':
     people_raw_query = """
         SELECT *
         FROM people_raw;
+        """
+    crashes_query = """
+        SELECT *
+        FROM crashes;
         """
     people_minor_query ="""
         SELECT crash_record_id, person_type, ejection
@@ -184,7 +188,7 @@ if __name__ == '__main__':
     # Joining people table columns to crashes table
     print("Joining people table columns to crashes table...")
     df_people = get_sql_data("chi-traffic-accidents", people_minor_query)
-    df_crashes = get_sql_data("chi-traffic-accidents", crashes_raw_query)
+    df_crashes = get_sql_data("chi-traffic-accidents", crashes_query)
     df_pt = subset_aggregate_people_df(
         df_people, "person_type", ("BICYCLE", "PEDESTRIAN"), 
         {"BICYCLE": "num_bikes_involved", 
