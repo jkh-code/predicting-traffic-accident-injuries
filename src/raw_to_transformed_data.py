@@ -6,7 +6,7 @@ from os import environ
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 
-from typing import Union, Literal, List
+from typing import Union, Literal, List, Tuple, Dict
 
 pd.set_option("display.max_columns", None)
 
@@ -110,6 +110,18 @@ def transform_and_store_data(dbname, query, col_types_dict, table_name):
     alchemy_engine.dispose()
     return None
 
+def subset_aggregate_people_df(
+        df: pd.DataFrame, agg_column: str, value_tuple: Tuple[int], 
+        rename_dict: Dict[str, str]) -> pd.DataFrame:
+    """Sum subset of categories for a dataframe column."""
+    df_subset = df.loc[df[agg_column].isin(value_tuple), ["crash_record_id", agg_column]]
+    df_subset["count"] = 1
+    df_subset = df_subset.pivot_table(index="crash_record_id", columns=agg_column, values="count", aggfunc="sum", fill_value=0)
+    if rename_dict:
+        df_subset = df_subset.rename(columns=rename_dict)
+    df_subset = df_subset.reset_index(drop=False)
+    return df_subset
+
 
 if __name__ == '__main__':
     print("Starting program...")
@@ -122,6 +134,10 @@ if __name__ == '__main__':
     people_raw_query = """
         SELECT *
         FROM people_raw;
+        """
+    people_minor_query ="""
+        SELECT crash_record_id, person_type, ejection
+        FROM people;
         """
 
     # Defining column datatypes
@@ -156,12 +172,41 @@ if __name__ == '__main__':
             "pedpedal_location", "bac_result", "cell_phone_use"]}
 
     # Transforming and storing data
-    transform_and_store_data(
-        dbname="chi-traffic-accidents", query=crashes_raw_query, 
-        col_types_dict=crashes_col_types, table_name="crashes")
+    # TODO Uncomment following block for production
+    # transform_and_store_data(
+    #     dbname="chi-traffic-accidents", query=crashes_raw_query, 
+    #     col_types_dict=crashes_col_types, table_name="crashes")
     # TODO Uncomment following block for production
     # transform_and_store_data(dbname="chi-traffic-accidents", 
         # query=people_raw_query, col_types_dict=people_col_types, 
         # table_name="people")
-    
+
+    # Joining people table columns to crashes table
+    print("Joining people table columns to crashes table...")
+    df_people = get_sql_data("chi-traffic-accidents", people_minor_query)
+    df_crashes = get_sql_data("chi-traffic-accidents", crashes_raw_query)
+    df_pt = subset_aggregate_people_df(
+        df_people, "person_type", ("BICYCLE", "PEDESTRIAN"), 
+        {"BICYCLE": "num_bikes_involved", 
+            "PEDESTRIAN": "num_pedestrians_involved"})
+    df_ej = subset_aggregate_people_df(
+        df_people, "ejection", 
+        ("PARTIALLY EJECTED", "TOTALLY EJECTED", "TRAPPED/EXTRICATED"), 
+        {"PARTIALLY EJECTED": "num_partially_ejected", 
+            "TOTALLY EJECTED": "num_partially_ejected",
+            "TRAPPED/EXTRICATED": "num_extricated"})
+    df_temp = (
+        df_crashes.loc[:, ["crash_record_id", "posted_speed_limit"]]
+            .merge(df_pt, how="left", on="crash_record_id")
+            .merge(df_ej, how="left", on="crash_record_id"))
+    df_temp = df_temp.drop(columns=["posted_speed_limit"])
+    df_temp = df_temp.fillna(0)
+    df_crashes = df_crashes.merge(df_temp, how="left", on="crash_record_id")
+    alchemy_engine = make_alchemy_engine(dbname="chi-traffic-accidents")
+    print("Writing joined table to database...")
+    df_crashes.to_sql(
+        name="crashes_joined", con=alchemy_engine, if_exists="replace", 
+        index=False)
+    alchemy_engine.dispose()
+
     print("Program complete.")
