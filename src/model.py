@@ -131,6 +131,8 @@ def create_logistic_model(
     return model
 
 if __name__ == '__main__':
+    print("Starting program...")
+
     drop_additional = True
 
     # Get crashes data
@@ -139,9 +141,11 @@ if __name__ == '__main__':
     FROM crashes_joined;
     """
     dbname = "chi-traffic-accidents"
+    print("Accessing data from database...")
     df_crashes = get_sql_data(dbname, query_crashes)
 
     # Transforming df_crashes for preliminary model
+    print("Transforming data...")
     drop_cols = ['crash_record_id', 'crash_date', 'report_type', 
         'prim_contributory_cause', 'intersection_related_i', 'hit_and_run_i', 
         'lane_cnt', 'has_injuries']
@@ -181,6 +185,7 @@ if __name__ == '__main__':
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
     
+    print("Creating train-test split")
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # Evaluate regression models
@@ -192,3 +197,7 @@ if __name__ == '__main__':
     # Create logistic model
     create_logistic_model(
         X_train, y_train, X_test, y_test, run=False, save=True)
+
+    # Evaluate features with lasso regression
+
+    print("Program complete.")
