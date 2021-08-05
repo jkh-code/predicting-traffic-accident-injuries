@@ -7,7 +7,10 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
+
 from typing import Union
+import time
+import joblib
 
 from raw_to_transformed_data import get_sql_data
 
@@ -64,6 +67,68 @@ def evaluate_regression_models(
 
     return None
 
+def evaluate_model_times(
+        X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
+        y_test: pd.DataFrame, run: bool=False) -> Union[pd.DataFrame, None]:
+    """Evaluate fitting and predicting time for models."""
+    if not run:
+        return None
+
+    print("Evaluating models...")
+    model_lr = LinearRegression()
+    model_gb = GradientBoostingRegressor(
+        learning_rate=0.1,
+        n_estimators=100,
+        max_depth=3,
+        min_samples_leaf=1,
+        min_samples_split=2)
+    models_all = [model_lr, model_gb]
+    
+    fit_times = []
+    pred_times = []
+    rmse_scores = []
+    for model in models_all:
+        print(f"Evaluating model: {model}")
+        model_ = model
+
+        start_time = time.time()
+        model_.fit(X_train, y_train)
+        model_time = time.time() - start_time
+        fit_times.append(model_time)
+
+        start_time = time.time()
+        y_pred = model_.predict(X_test)
+        pred_time = time.time() - start_time
+        pred_times.append(pred_time)
+
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        rmse_scores.append(rmse)
+    
+    df = pd.DataFrame({
+        "model": models_all, "rmse": rmse_scores, "fit_time": fit_times, 
+        "pred_time": pred_times})
+    print(df)
+    return df
+
+def create_logistic_model(
+        X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
+        y_test: pd.DataFrame, run: bool=False, 
+        save: bool=True) -> Union[None, LinearRegression]:
+    """Create and save final logistic model."""
+    if not run:
+        return None
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+
+    print(f"Model RMSE: {rmse}")
+
+    if save:
+        joblib.dump(model, "./models/logistic-reg-model.pkl")
+
+    return model
 
 if __name__ == '__main__':
     drop_additional = True
@@ -120,3 +185,10 @@ if __name__ == '__main__':
 
     # Evaluate regression models
     evaluate_regression_models(X_train, y_train, X_test, y_test, run=False)
+
+    # Evaluate model time
+    df_eval = evaluate_model_times(X_train, y_train, X_test, y_test, run=False)
+
+    # Create logistic model
+    create_logistic_model(
+        X_train, y_train, X_test, y_test, run=True, save=True)
