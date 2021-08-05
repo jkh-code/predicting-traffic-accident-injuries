@@ -53,7 +53,9 @@ if __name__ == '__main__':
     del df_crashes
 
     # Transforming X and y for modeling
-    numeric_cols = ["posted_speed_limit", "num_units", "crash_hour"]
+    numeric_cols = ["posted_speed_limit", "num_units", "crash_hour", 
+        'num_bikes_involved', 'num_extricated', 'num_partially_ejected', 
+        'num_pedestrians_involved']
     category_cols = X.columns.difference(numeric_cols)
     
     encoder = OneHotEncoder(drop=None, sparse=True)
@@ -79,8 +81,8 @@ if __name__ == '__main__':
     # Evaluate regression models
     model_lr = LinearRegression()
     model_rf = RandomForestRegressor(
-        n_estimators=10,
-        max_features="auto")
+        n_estimators=50,
+        max_features="sqrt")
     model_gb = GradientBoostingRegressor(
         learning_rate=0.1,
         n_estimators=100,
