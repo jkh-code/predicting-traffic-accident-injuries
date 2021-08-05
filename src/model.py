@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # Get crashes data
     query_crashes = """
     SELECT *
-    FROM crashes;
+    FROM crashes_joined;
     """
     dbname = "chi-traffic-accidents"
     df_crashes = get_sql_data(dbname, query_crashes)
@@ -57,7 +57,6 @@ if __name__ == '__main__':
         'num_bikes_involved', 'num_extricated', 'num_partially_ejected', 
         'num_pedestrians_involved']
     category_cols = X.columns.difference(numeric_cols)
-    
     encoder = OneHotEncoder(drop=None, sparse=True)
     onehot_crashes = encoder.fit_transform(X[category_cols])
     matrix_cols = []
