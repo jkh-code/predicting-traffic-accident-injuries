@@ -7,9 +7,24 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
+from typing import Union
 
 from raw_to_transformed_data import get_sql_data
 
+np.set_printoptions(suppress=True)
+
+ModelRegressor = Union[
+    LinearRegression, RandomForestRegressor, GradientBoostingRegressor]
+
+def cv_regression_model(
+        model: ModelRegressor, X: pd.DataFrame, y: pd.DataFrame, 
+        scoring: str="neg_mean_squared_error", 
+        cv: int=5) -> np.ndarray:
+    """Perform cross validation on regression models."""
+    rmses = cross_val_score(
+        model, X, y, scoring=scoring, cv=cv)
+    avg_rmse = np.mean(np.sqrt(-rmses))
+    return avg_rmse, np.sqrt(-rmses)
 
 
 if __name__ == '__main__':
@@ -61,9 +76,25 @@ if __name__ == '__main__':
     rmse_dum = np.sqrt(mean_squared_error(y_test, y_pred))
     print(f"RMSE dum: {rmse_dum:.4f}")
 
-    # Linear Regression model
+    # Evaluate regression models
     model_lr = LinearRegression()
-    scores_lr = cross_val_score(
-        model_lr, X_train, y_train, scoring="neg_mean_squared_error", cv=5)
-    avg_rmse_lr = np.mean(np.sqrt(-scores_lr))
-    print(f"AVG RMSE lr : {avg_rmse_lr:.4f}")
+    model_rf = RandomForestRegressor(
+        n_estimators=10,
+        max_features="auto")
+    model_gb = GradientBoostingRegressor(
+        learning_rate=0.1,
+        n_estimators=100,
+        max_depth=3,
+        min_samples_leaf=1,
+        min_samples_split=2)
+    models_all = [model_lr, model_rf, model_gb]
+    # models_all = [model_lr]
+
+    scores = []
+    score_lists = []
+    for model in models_all:
+        score, lst = cv_regression_model(model, X_train, y_train)
+        scores.append(score)
+        score_lists.append(lst)
+        print(f"RMSE for {model}: {score:.4f}")
+        print(lst)
