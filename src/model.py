@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from sklearn.dummy import DummyRegressor
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Lasso
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
 
@@ -134,6 +134,7 @@ if __name__ == '__main__':
     print("Starting program...")
 
     drop_additional = True
+    save_elements = False
 
     # Get crashes data
     query_crashes = """
@@ -173,6 +174,18 @@ if __name__ == '__main__':
         numeric_cols = ["posted_speed_limit", "num_units", "crash_hour", 
             "num_bikes_involved", "num_pedestrians_involved", 
             "num_extricated", "num_ejected"]
+    
+    # MinMax scale
+    continuous = X[numeric_cols].copy()
+    X = X.drop(columns=numeric_cols)
+    scaler = MinMaxScaler()
+    transformed_data = scaler.fit_transform(continuous)
+    transformed_data = pd.DataFrame(transformed_data, columns=numeric_cols)
+    X = pd.concat([X, transformed_data], axis=1)
+    if save_elements:
+        joblib.dump(scaler, "./data/scaler.pkl")
+
+    # OneHot encode
     category_cols = X.columns.difference(numeric_cols)
     encoder = OneHotEncoder(drop=None, sparse=True)
     onehot_crashes = encoder.fit_transform(X[category_cols])
@@ -184,6 +197,8 @@ if __name__ == '__main__':
         [X[numeric_cols].reset_index(), pd.DataFrame(
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
+    if save_elements:
+        joblib.dump(encoder, "./data/encoder.pkl")
     
     print("Creating train-test split")
     X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -196,8 +211,9 @@ if __name__ == '__main__':
 
     # Create logistic model
     create_logistic_model(
-        X_train, y_train, X_test, y_test, run=False, save=True)
+        X_train, y_train, X_test, y_test, run=True, save=save_elements)
 
     # Evaluate features with lasso regression
+
 
     print("Program complete.")
