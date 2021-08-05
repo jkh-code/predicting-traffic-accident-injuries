@@ -26,8 +26,48 @@ def cv_regression_model(
     avg_rmse = np.mean(np.sqrt(-rmses))
     return avg_rmse, np.sqrt(-rmses)
 
+def evaluate_regression_models(
+        X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
+        y_test: pd.DataFrame, run: bool=False) -> None:
+    """Evaluate linear regression, random forest, and gradient boosted
+    regressors."""
+    if not run:
+        return None
+
+    model_lr = LinearRegression()
+    model_rf = RandomForestRegressor(
+        n_estimators=50,
+        max_features="sqrt")
+    model_gb = GradientBoostingRegressor(
+        learning_rate=0.1,
+        n_estimators=100,
+        max_depth=3,
+        min_samples_leaf=1,
+        min_samples_split=2)
+    models_all = [model_lr, model_rf, model_gb]
+
+    # Baseline model
+    model_dum = DummyRegressor(strategy="mean")
+    model_dum.fit(X_train, y_train)
+    y_pred = model_dum.predict(X_test)
+    rmse_dum = np.sqrt(mean_squared_error(y_test, y_pred))
+    print(f"RMSE dum: {rmse_dum:.4f}")
+
+    scores = []
+    score_lists = []
+    for model in models_all:
+        score, lst = cv_regression_model(model, X_train, y_train)
+        scores.append(score)
+        score_lists.append(lst)
+        print(f"RMSE for {model}: {score:.4f}")
+        print(lst)
+
+    return None
+
 
 if __name__ == '__main__':
+    drop_additional = True
+
     # Get crashes data
     query_crashes = """
     SELECT *
@@ -40,7 +80,12 @@ if __name__ == '__main__':
     drop_cols = ['crash_record_id', 'crash_date', 'report_type', 
         'prim_contributory_cause', 'intersection_related_i', 'hit_and_run_i', 
         'lane_cnt', 'has_injuries']
-    df_crashes = df_crashes.drop(columns=drop_cols)
+    if drop_additional:
+        drop_additional = ['num_bikes_involved', 'num_extricated', 
+            "num_pedestrians_involved", "num_ejected"]
+    else:
+        drop_additional = []
+    df_crashes = df_crashes.drop(columns=drop_cols+drop_additional)
 
     df_crashes = df_crashes.rename(columns={"crash_day_of_week": "crash_day"})
     df_crashes["street_direction"] = (
@@ -53,9 +98,12 @@ if __name__ == '__main__':
     del df_crashes
 
     # Transforming X and y for modeling
-    numeric_cols = ["posted_speed_limit", "num_units", "crash_hour", 
-        'num_bikes_involved', 'num_extricated', 'num_partially_ejected', 
-        'num_pedestrians_involved']
+    if drop_additional:
+        numeric_cols = ["posted_speed_limit", "num_units", "crash_hour"]
+    else:
+        numeric_cols = ["posted_speed_limit", "num_units", "crash_hour", 
+            "num_bikes_involved", "num_pedestrians_involved", 
+            "num_extricated", "num_ejected"]
     category_cols = X.columns.difference(numeric_cols)
     encoder = OneHotEncoder(drop=None, sparse=True)
     onehot_crashes = encoder.fit_transform(X[category_cols])
@@ -64,38 +112,11 @@ if __name__ == '__main__':
         for e in ele:
             matrix_cols.append(col + "_" + e.lower())
     X = pd.concat(
-        [X[numeric_cols], pd.DataFrame(
+        [X[numeric_cols].reset_index(), pd.DataFrame(
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
     
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
-    # Baseline model
-    model_dum = DummyRegressor(strategy="mean")
-    model_dum.fit(X_train, y_train)
-    y_pred = model_dum.predict(X_test)
-    rmse_dum = np.sqrt(mean_squared_error(y_test, y_pred))
-    print(f"RMSE dum: {rmse_dum:.4f}")
-
     # Evaluate regression models
-    model_lr = LinearRegression()
-    model_rf = RandomForestRegressor(
-        n_estimators=50,
-        max_features="sqrt")
-    model_gb = GradientBoostingRegressor(
-        learning_rate=0.1,
-        n_estimators=100,
-        max_depth=3,
-        min_samples_leaf=1,
-        min_samples_split=2)
-    models_all = [model_lr, model_rf, model_gb]
-    # models_all = [model_lr]
-
-    scores = []
-    score_lists = []
-    for model in models_all:
-        score, lst = cv_regression_model(model, X_train, y_train)
-        scores.append(score)
-        score_lists.append(lst)
-        print(f"RMSE for {model}: {score:.4f}")
-        print(lst)
+    evaluate_regression_models(X_train, y_train, X_test, y_test, run=False)
