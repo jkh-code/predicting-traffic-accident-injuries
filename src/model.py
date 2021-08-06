@@ -132,6 +132,42 @@ def create_logistic_model(
 
     return model
 
+def evaluate_with_lasso_regression(
+        X_train: pd.DataFrame, y_train: pd.DataFrame, run: bool=True, 
+        save: bool=False):
+    """Plot the beta versus alpha curves to eyeball important features."""
+    print("Evaluating features with lasso...")
+    columns = X_train.columns
+    num_features = X_train.shape[1]
+    num_alphas = 50
+    min_alpha_exp = -3
+    max_alpha_exp = -1
+    coefs = np.zeros((num_alphas, num_features))
+    alphas = np.logspace(min_alpha_exp, max_alpha_exp, num_alphas)
+    for i, alpha in enumerate(alphas):
+        model = Lasso(alpha=alpha)
+        model.fit(X_train, y_train)
+        coefs[i] = model.coef_
+
+    # Extracting columns with non-zero values after the 26th element
+    print("Plotting beta as a function of alpha curves...")
+    non_zero_indices = np.where(coefs[26, :] != 0)[0]
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for feature in non_zero_indices:
+        plt.plot(
+            alphas, coefs[:, feature],
+            label=r"$\beta$_{}".format(columns[feature]))
+    ax.set_xscale("log")
+    ax.set_title(r"Lasso Regression $\beta$'s as a function of $\alpha$ for Top 7 Features")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$\beta$")
+    ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
+    fig.tight_layout()
+    if save:
+        plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
+
+    return None
+
 if __name__ == '__main__':
     print("Starting program...")
 
@@ -216,33 +252,6 @@ if __name__ == '__main__':
         X_train, y_train, X_test, y_test, run=False, save=save_elements)
 
     # Evaluate features with lasso regression
-    print("Evaluating features with lasso...")
-    columns = X_train.columns
-    num_features = X_train.shape[1]
-    num_alphas = 50
-    min_alpha_exp = -3
-    max_alpha_exp = -1
-    coefs = np.zeros((num_alphas, num_features))
-    alphas = np.logspace(min_alpha_exp, max_alpha_exp, num_alphas)
-    for i, alpha in enumerate(alphas):
-        model = Lasso(alpha=alpha)
-        model.fit(X_train, y_train)
-        coefs[i] = model.coef_
-
-    # Extracting columns with non-zero values after the 26th element
-    print("Plotting beta as a function of alpha curves...")
-    non_zero_indices = np.where(coefs[26, :] != 0)[0]
-    fig, ax = plt.subplots(figsize=(10, 5))
-    for feature in non_zero_indices:
-        plt.plot(
-            alphas, coefs[:, feature],
-            label=r"$\beta$_{}".format(columns[feature]))
-    ax.set_xscale("log")
-    ax.set_title(r"Lasso Regression $\beta$'s as a function of $\alpha$ for Top 7 Features")
-    ax.set_xlabel(r"$\alpha$")
-    ax.set_ylabel(r"$\beta$")
-    ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
-    fig.tight_layout()
-    plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
+    evaluate_with_lasso_regression(X_train, y_train, run=True, save=False)
 
     print("Program complete.")
