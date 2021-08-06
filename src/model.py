@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from sklearn.dummy import DummyRegressor
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.linear_model import LinearRegression, Lasso, LassoCV
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
 
@@ -132,7 +132,7 @@ def create_logistic_model(
 
     return model
 
-def evaluate_with_lasso_regression(
+def evaluate_with_lasso_regression_plot(
         X_train: pd.DataFrame, y_train: pd.DataFrame, run: bool=True, 
         save: bool=False):
     """Plot the beta versus alpha curves to eyeball important features."""
@@ -158,7 +158,9 @@ def evaluate_with_lasso_regression(
             alphas, coefs[:, feature],
             label=r"$\beta$_{}".format(columns[feature]))
     ax.set_xscale("log")
-    ax.set_title(r"Lasso Regression $\beta$'s as a function of $\alpha$ for Top 7 Features")
+    ax.set_title(
+        r"Lasso Regression $\beta$'s as a function of $\alpha$ for "
+            + "Top 7 Features")
     ax.set_xlabel(r"$\alpha$")
     ax.set_ylabel(r"$\beta$")
     ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
@@ -251,7 +253,12 @@ if __name__ == '__main__':
     create_logistic_model(
         X_train, y_train, X_test, y_test, run=False, save=save_elements)
 
-    # Evaluate features with lasso regression
-    evaluate_with_lasso_regression(X_train, y_train, run=True, save=False)
+    # Evaluate features with lasso regression plot
+    evaluate_with_lasso_regression_plot(X_train, y_train, run=True, save=False)
+
+    # Lasso regression CV
+    
+
+
 
     print("Program complete.")
