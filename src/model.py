@@ -136,9 +136,9 @@ def evaluate_with_lasso_regression_plot(
         X_train: pd.DataFrame, y_train: pd.DataFrame, run: bool=True, 
         save: bool=False) -> None:
     """Plot the beta versus alpha curves to eyeball important features."""
-    print("Evaluating features with lasso...")
     if not run:
         return None
+    print("Evaluating features with lasso...")
     columns = X_train.columns
     num_features = X_train.shape[1]
     num_alphas = 50
@@ -181,8 +181,10 @@ def create_lasso_regression_model(
         return None
 
     # Create model
+    print("Creating lasso CV model...")
     model = LassoCV(n_alphas=500, cv=5, n_jobs=-1)
 
+    print("Fitting lasso CV model...")
     start_time = time.time()
     model.fit(X_train, y_train)
     fit_time = time.time()-start_time
@@ -190,6 +192,7 @@ def create_lasso_regression_model(
     fit_alpha = model.alpha_
     fit_coefs = model.coef_
 
+    print("Predicting with lasso CV model...")
     start_time = time.time()
     y_pred = model.predict(X_test)
     pred_time = time.time()-start_time
@@ -203,9 +206,12 @@ def create_lasso_regression_model(
 
     # Save model
     if save:
+        print("Saving lasso CV model...")
         joblib.dump(model, "./models/lasso-reg-model.pkl")
     
     # Model report
+    print("Lasso CV model report:")
+    print("----------------------")
     print(f"RMSE     : {rmse}")
     print(f"Alpha    : {fit_alpha}")
     print(f"Pred time: {pred_time}")
