@@ -112,11 +112,11 @@ def evaluate_model_times(
     print(df)
     return df
 
-def create_logistic_model(
+def create_linear_regression_model(
         X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
         y_test: pd.DataFrame, run: bool=False, 
         save: bool=True) -> Union[None, LinearRegression]:
-    """Create and save final logistic model."""
+    """Create and save final linear regression model."""
     if not run:
         return None
 
@@ -134,9 +134,11 @@ def create_logistic_model(
 
 def evaluate_with_lasso_regression_plot(
         X_train: pd.DataFrame, y_train: pd.DataFrame, run: bool=True, 
-        save: bool=False):
+        save: bool=False) -> None:
     """Plot the beta versus alpha curves to eyeball important features."""
     print("Evaluating features with lasso...")
+    if not run:
+        return None
     columns = X_train.columns
     num_features = X_train.shape[1]
     num_alphas = 50
@@ -169,6 +171,51 @@ def evaluate_with_lasso_regression_plot(
         plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
 
     return None
+
+def create_lasso_regression_model(
+        X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
+        y_test: pd.DataFrame, run: bool=True, save: bool=False
+        ) -> Union[None, Lasso]:
+    """Create and save lasso regression model."""
+    if not run:
+        return None
+
+    # Create model
+    model = LassoCV(n_alphas=500, cv=5, n_jobs=-1)
+
+    start_time = time.time()
+    model.fit(X_train, y_train)
+    fit_time = time.time()-start_time
+
+    fit_alpha = model.alpha_
+    fit_coefs = model.coef_
+
+    start_time = time.time()
+    y_pred = model.predict(X_test)
+    pred_time = time.time()-start_time
+
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+
+    # Feature selection
+    importance = np.abs(model.coef_)
+    keep_features = X_train.columns[importance > 0]
+    discard_features = X_train.columns[importance == 0]
+
+    # Save model
+    if save:
+        joblib.dump(model, "./models/lasso-reg-model.pkl")
+    
+    # Model report
+    print(f"RMSE     : {rmse}")
+    print(f"Alpha    : {fit_alpha}")
+    print(f"Pred time: {pred_time}")
+    print("")
+    print(f"Features to keep: {len(keep_features)}")
+    print(f"Features to keep: {keep_features}")
+    print(f"Features to drop: {len(discard_features)}")
+    print(f"Features to drop: {discard_features}")
+
+    return model
 
 if __name__ == '__main__':
     print("Starting program...")
@@ -250,14 +297,16 @@ if __name__ == '__main__':
     df_eval = evaluate_model_times(X_train, y_train, X_test, y_test, run=False)
 
     # Create logistic model
-    create_logistic_model(
+    create_linear_regression_model(
         X_train, y_train, X_test, y_test, run=False, save=save_elements)
 
     # Evaluate features with lasso regression plot
-    evaluate_with_lasso_regression_plot(X_train, y_train, run=True, save=False)
+    evaluate_with_lasso_regression_plot(
+        X_train, y_train, run=False, save=False)
 
     # Lasso regression CV
-    
+    create_lasso_regression_model(
+        X_train, y_train, X_test, y_test, run=True, save=False)
 
 
 
