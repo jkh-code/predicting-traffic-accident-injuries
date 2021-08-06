@@ -220,10 +220,10 @@ if __name__ == '__main__':
     columns = X_train.columns
     num_features = X_train.shape[1]
     num_alphas = 50
-    min_alpha = -3
-    max_alpha = -1
+    min_alpha_exp = -3
+    max_alpha_exp = -1
     coefs = np.zeros((num_alphas, num_features))
-    alphas = np.logspace(min_alpha, max_alpha, num_alphas)
+    alphas = np.logspace(min_alpha_exp, max_alpha_exp, num_alphas)
     for i, alpha in enumerate(alphas):
         model = Lasso(alpha=alpha)
         model.fit(X_train, y_train)
