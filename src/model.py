@@ -133,8 +133,8 @@ def create_linear_regression_model(
     return model
 
 def evaluate_with_lasso_regression_plot(
-        X_train: pd.DataFrame, y_train: pd.DataFrame, run: bool=True, 
-        save: bool=False) -> None:
+        X_train: pd.DataFrame, y_train: pd.DataFrame, limit_plot: bool=False,
+        run: bool=True, save: bool=False) -> None:
     """Plot the beta versus alpha curves to eyeball important features."""
     if not run:
         return None
@@ -142,7 +142,7 @@ def evaluate_with_lasso_regression_plot(
     columns = X_train.columns
     num_features = X_train.shape[1]
     num_alphas = 50
-    min_alpha_exp = -3
+    min_alpha_exp = -6
     max_alpha_exp = -1
     coefs = np.zeros((num_alphas, num_features))
     alphas = np.logspace(min_alpha_exp, max_alpha_exp, num_alphas)
@@ -153,23 +153,39 @@ def evaluate_with_lasso_regression_plot(
 
     # Extracting columns with non-zero values after the 26th element
     print("Plotting beta as a function of alpha curves...")
-    non_zero_indices = np.where(coefs[26, :] != 0)[0]
     fig, ax = plt.subplots(figsize=(10, 5))
-    for feature in non_zero_indices:
-        plt.plot(
-            alphas, coefs[:, feature],
-            label=r"$\beta$_{}".format(columns[feature]))
+    if limit_plot:
+        non_zero_indices = np.where(coefs[26, :] != 0)[0]
+        for feature in non_zero_indices:
+            plt.plot(
+                alphas, coefs[:, feature],
+                label=r"$\beta$_{}".format(columns[feature]))
+        ax.set_title(
+            r"Lasso Regression $\beta$'s as a function of $\alpha$ for "
+                + "Top Features")
+        ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
+    else:
+        for feature in range(num_features):
+            plt.plot(
+                alphas, coefs[:, feature],
+                label=r"$\beta$_{}".format(columns[feature]))
+
+        ax.axvline(0.00003274, color="black")
+        ax.text(
+            0.00003274, 0.65, r"  $\alpha=3.274\mathrm{e}{-5}$", 
+            transform=ax.get_xaxis_text1_transform(0)[0])
+
+        ax.set_title(r"Lasso Regression $\beta$'s as a function of $\alpha$")
+
     ax.set_xscale("log")
-    ax.set_title(
-        r"Lasso Regression $\beta$'s as a function of $\alpha$ for "
-            + "Top 7 Features")
     ax.set_xlabel(r"$\alpha$")
     ax.set_ylabel(r"$\beta$")
-    ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
     fig.tight_layout()
     if save:
         plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
 
+    # TODO remove plt.show()
+    plt.show()
     return None
 
 def create_lasso_regression_model(
@@ -182,7 +198,7 @@ def create_lasso_regression_model(
 
     # Create model
     print("Creating lasso CV model...")
-    model = LassoCV(n_alphas=500, cv=5, n_jobs=-1)
+    model = LassoCV(n_alphas=1000, cv=5, n_jobs=-1)
 
     print("Fitting lasso CV model...")
     start_time = time.time()
@@ -308,11 +324,11 @@ if __name__ == '__main__':
 
     # Evaluate features with lasso regression plot
     evaluate_with_lasso_regression_plot(
-        X_train, y_train, run=False, save=False)
+        X_train, y_train, run=True, save=False)
 
     # Lasso regression CV
     create_lasso_regression_model(
-        X_train, y_train, X_test, y_test, run=True, save=False)
+        X_train, y_train, X_test, y_test, run=False, save=False)
 
 
 
