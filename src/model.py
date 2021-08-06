@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from sklearn.dummy import DummyRegressor
@@ -15,6 +16,7 @@ import joblib
 from raw_to_transformed_data import get_sql_data
 
 np.set_printoptions(suppress=True)
+plt.style.use("ggplot")
 
 ModelRegressor = Union[
     LinearRegression, RandomForestRegressor, GradientBoostingRegressor]
@@ -194,13 +196,13 @@ if __name__ == '__main__':
         for e in ele:
             matrix_cols.append(col + "_" + e.lower())
     X = pd.concat(
-        [X[numeric_cols].reset_index(), pd.DataFrame(
+        [X[numeric_cols].reset_index(drop=True), pd.DataFrame(
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
     if save_elements:
         joblib.dump(encoder, "./data/encoder.pkl")
     
-    print("Creating train-test split")
+    print("Creating train-test split...")
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # Evaluate regression models
@@ -211,9 +213,36 @@ if __name__ == '__main__':
 
     # Create logistic model
     create_logistic_model(
-        X_train, y_train, X_test, y_test, run=True, save=save_elements)
+        X_train, y_train, X_test, y_test, run=False, save=save_elements)
 
     # Evaluate features with lasso regression
+    print("Evaluating features with lasso...")
+    columns = X_train.columns
+    num_features = X_train.shape[1]
+    num_alphas = 50
+    min_alpha = -3
+    max_alpha = -1
+    coefs = np.zeros((num_alphas, num_features))
+    alphas = np.logspace(min_alpha, max_alpha, num_alphas)
+    for i, alpha in enumerate(alphas):
+        model = Lasso(alpha=alpha)
+        model.fit(X_train, y_train)
+        coefs[i] = model.coef_
 
+    # Extracting columns with non-zero values after the 26th element
+    print("Plotting beta as a function of alpha curves...")
+    non_zero_indices = np.where(coefs[26, :] != 0)[0]
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for feature in non_zero_indices:
+        plt.plot(
+            alphas, coefs[:, feature],
+            label=r"$\beta$_{}".format(columns[feature]))
+    ax.set_xscale("log")
+    ax.set_title(r"Lasso Regression $\beta$'s as a function of $\alpha$ for Top 7 Features")
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel(r"$\beta$")
+    ax.legend(title=None, loc="upper right", bbox_to_anchor=(1, 1))
+    fig.tight_layout()
+    plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
 
     print("Program complete.")
