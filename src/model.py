@@ -134,7 +134,7 @@ def create_linear_regression_model(
 
 def evaluate_with_lasso_regression_plot(
         X_train: pd.DataFrame, y_train: pd.DataFrame, limit_plot: bool=False,
-        run: bool=True, save: bool=False) -> None:
+        run: bool=False, save: bool=True) -> None:
     """Plot the beta versus alpha curves to eyeball important features."""
     if not run:
         return None
@@ -184,13 +184,11 @@ def evaluate_with_lasso_regression_plot(
     if save:
         plt.savefig("./images/lasso-regression-beta-alpha-plot.png")
 
-    # TODO remove plt.show()
-    plt.show()
     return None
 
 def create_lasso_regression_model(
         X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, 
-        y_test: pd.DataFrame, run: bool=True, save: bool=False
+        y_test: pd.DataFrame, run: bool=False, save: bool=True
         ) -> Union[None, Lasso]:
     """Create and save lasso regression model."""
     if not run:
@@ -198,7 +196,7 @@ def create_lasso_regression_model(
 
     # Create model
     print("Creating lasso CV model...")
-    model = LassoCV(n_alphas=1000, cv=5, n_jobs=-1)
+    model = LassoCV(n_alphas=250, cv=5, n_jobs=-1)
 
     print("Fitting lasso CV model...")
     start_time = time.time()
@@ -292,7 +290,8 @@ if __name__ == '__main__':
     transformed_data = pd.DataFrame(transformed_data, columns=numeric_cols)
     X = pd.concat([X, transformed_data], axis=1)
     if save_elements:
-        joblib.dump(scaler, "./data/scaler.pkl")
+        print("Saving scaler...")
+        joblib.dump(scaler, "./models/scaler.pkl")
 
     # OneHot encode
     category_cols = X.columns.difference(numeric_cols)
@@ -307,29 +306,25 @@ if __name__ == '__main__':
             onehot_crashes.toarray(), columns=matrix_cols)], 
         axis=1)
     if save_elements:
-        joblib.dump(encoder, "./data/encoder.pkl")
+        print("Saving encoder...")
+        joblib.dump(encoder, "./models/encoder.pkl")
     
     print("Creating train-test split...")
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # Evaluate regression models
-    evaluate_regression_models(X_train, y_train, X_test, y_test, run=False)
+    evaluate_regression_models(X_train, y_train, X_test, y_test)
 
     # Evaluate model time
-    df_eval = evaluate_model_times(X_train, y_train, X_test, y_test, run=False)
+    df_eval = evaluate_model_times(X_train, y_train, X_test, y_test)
 
     # Create logistic model
-    create_linear_regression_model(
-        X_train, y_train, X_test, y_test, run=False, save=save_elements)
+    create_linear_regression_model(X_train, y_train, X_test, y_test)
 
     # Evaluate features with lasso regression plot
-    evaluate_with_lasso_regression_plot(
-        X_train, y_train, run=True, save=False)
+    evaluate_with_lasso_regression_plot(X_train, y_train)
 
     # Lasso regression CV
-    create_lasso_regression_model(
-        X_train, y_train, X_test, y_test, run=False, save=False)
-
-
+    create_lasso_regression_model(X_train, y_train, X_test, y_test)
 
     print("Program complete.")
