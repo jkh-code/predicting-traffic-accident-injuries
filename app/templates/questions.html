@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Welcome</title>
+    <link href="./static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/cover.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="card-deck mb-3">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal text-center">Accident Details</h4>
+            </div>
+            <div class="card-body">
+                <form action="/results" method="post">
+                    <div class="form-group">
+                        <label for="speed-limit">Posted Speed Limit</label>
+                        <input type="number" step="5" min="5" max="75" class="form-control" name="speed-limit" id="speed-limit" value="" required>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="traffic-control-device">Traffic Control Device Present</label>
+                        <select class="form-control" id="traffic-control-device" required>
+                            <option value="" selected>Choose a traffic control device...</option>
+                            <option value="NO CONTROLS">No Controls</option>
+                            <option value="TRAFFIC SIGNAL">Traffic Signal</option>
+                            <option value="STOP SIGN/FLASHER">Stop Sign/Flasher</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="OTHER">Other</option>
+                            <option value="RR CROSSING SIGN">Rr Crossing Sign</option>
+                            <option value="YIELD">Yield</option>
+                            <option value="PEDESTRIAN CROSSING SIGN">Pedestrian Crossing Sign</option>
+                            <option value="OTHER REG. SIGN">Other Reg. Sign</option>
+                            <option value="OTHER RAILROAD CROSSING">Other Railroad Crossing</option>
+                            <option value="POLICE/FLAGMAN">Police/Flagman</option>
+                            <option value="DELINEATORS">Delineators</option>
+                            <option value="NO PASSING">No Passing</option>
+                            <option value="OTHER WARNING SIGN">Other Warning Sign</option>
+                            <option value="FLASHING CONTROL SIGNAL">Flashing Control Signal</option>
+                            <option value="RAILROAD CROSSING GATE">Railroad Crossing Gate</option>
+                            <option value="SCHOOL ZONE">School Zone</option>
+                            <option value="BICYCLE CROSSING SIGN">Bicycle Crossing Sign</option>
+                            <option value="LANE USE MARKING">Lane Use Marking</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="device-condition">Device Condition</label>
+                        <select class="form-control" id="device-condition" required>
+                            <option value="" selected>Choose a device condition...</option>
+                            <option value="NO CONTROLS">No Controls</option>
+                            <option value="FUNCTIONING PROPERLY">Functioning Properly</option>
+                            <option value="FUNCTIONING IMPROPERLY">Functioning Improperly</option>
+                            <option value="NOT FUNCTIONING">Not Functioning</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="OTHER">Other</option>
+                            <option value="WORN REFLECTIVE MATERIAL">Worn Reflective Material</option>
+                            <option value="MISSING">Missing</option>
+
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="weather-condition">Weather Condition</label>
+                        <select class="form-control" id="weather-condition" required>
+                            <option value="" selected>Choose a weather condition...</option>
+                            <option value="CLEAR">Clear</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="SEVERE CROSS WIND GATE">Severe Cross Wind Gate</option>
+                            <option value="OTHER">Other</option>
+                            <option value="CLOUDY/OVERCAST">Cloudy/Overcast</option>
+                            <option value="RAIN">Rain</option>
+                            <option value="FREEZING RAIN/DRIZZLE">Freezing Rain/Drizzle</option>
+                            <option value="SNOW">Snow</option>
+                            <option value="FOG/SMOKE/HAZE">Fog/Smoke/Haze</option>
+                            <option value="SLEET/HAIL">Sleet/Hail</option>
+                            <option value="BLOWING SNOW">Blowing Snow</option>
+                            <option value="BLOWING SAND, SOIL, DIRT">Blowing Sand, Soil, Dirt</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="lighting-condition">Lighting Condition</label>
+                        <select class="form-control" id="lighting-condition" required>
+                            <option value="" selected>Choose a lighting condition...</option>
+                            <option value="DARKNESS, LIGHTED ROAD">Darkness, Lighted Road</option>
+                            <option value="DUSK">Dusk</option>
+                            <option value="DARKNESS">Darkness</option>
+                            <option value="DAYLIGHT">Daylight</option>
+                            <option value="DAWN">Dawn</option>
+                            <option value="UNKNOWN">Unknown</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="first-crash-type">Crash Type</label>
+                        <select class="form-control" id="first-crash-type" required>
+                            <option value="" selected>Choose a crash type...</option>
+                            <option value="FIXED OBJECT">Fixed Object</option>
+                            <option value="ANGLE">Angle</option>
+                            <option value="SIDESWIPE SAME DIRECTION">Sideswipe Same Direction</option>
+                            <option value="TURNING">Turning</option>
+                            <option value="PARKED MOTOR VEHICLE">Parked Motor Vehicle</option>
+                            <option value="REAR END">Rear End</option>
+                            <option value="HEAD ON">Head On</option>
+                            <option value="REAR TO SIDE">Rear To Side</option>
+                            <option value="REAR TO FRONT">Rear To Front</option>
+                            <option value="PEDESTRIAN">Pedestrian</option>
+                            <option value="PEDALCYCLIST">Pedalcyclist</option>
+                            <option value="SIDESWIPE OPPOSITE DIRECTION">Sideswipe Opposite Direction</option>
+                            <option value="REAR TO REAR">Rear To Rear</option>
+                            <option value="OTHER OBJECT">Other Object</option>
+                            <option value="OTHER NONCOLLISION">Other Noncollision</option>
+                            <option value="ANIMAL">Animal</option>
+                            <option value="OVERTURNED">Overturned</option>
+                            <option value="TRAIN">Train</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="trafficway-type">Trafficway Type</label>
+                        <select class="form-control" id="trafficway-type" required>
+                            <option value="" selected>Choose a trafficway type...</option>
+                            <option value="NOT DIVIDED">Not Divided</option>
+                            <option value="FOUR WAY">Four Way</option>
+                            <option value="OTHER">Other</option>
+                            <option value="ONE-WAY">One-Way</option>
+                            <option value="PARKING LOT">Parking Lot</option>
+                            <option value="DIVIDED - W/MEDIAN (NOT RAISED)">Divided - W/Median (Not Raised)</option>
+                            <option value="DIVIDED - W/MEDIAN BARRIER">Divided - W/Median Barrier</option>
+                            <option value="CENTER TURN LANE">Center Turn Lane</option>
+                            <option value="T-INTERSECTION">T-Intersection</option>
+                            <option value="ALLEY">Alley</option>
+                            <option value="Y-INTERSECTION">Y-Intersection</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="RAMP">Ramp</option>
+                            <option value="UNKNOWN INTERSECTION TYPE">Unknown Intersection Type</option>
+                            <option value="DRIVEWAY">Driveway</option>
+                            <option value="ROUNDABOUT">Roundabout</option>
+                            <option value="FIVE POINT, OR MORE">Five Point, Or More</option>
+                            <option value="NOT REPORTED">Not Reported</option>
+                            <option value="TRAFFIC ROUTE">Traffic Route</option>
+                            <option value="L-INTERSECTION">L-Intersection</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="alignment">Roadway Alignment</label>
+                        <select class="form-control" id="alignment" required>
+                            <option value="" selected>Choose a roadway alignment...</option>
+                            <option value="STRAIGHT AND LEVEL">Straight And Level</option>
+                            <option value="STRAIGHT ON GRADE">Straight On Grade</option>
+                            <option value="CURVE, LEVEL">Curve, Level</option>
+                            <option value="CURVE ON GRADE">Curve On Grade</option>
+                            <option value="STRAIGHT ON HILLCREST">Straight On Hillcrest</option>
+                            <option value="CURVE ON HILLCREST">Curve On Hillcrest</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="roadway-surface-cond">Roadway Surface Condition</label>
+                        <select class="form-control" id="roadway-surface-cond" required>
+                            <option value="" selected>Choose a surface condition...</option>
+                            <option value="DRY">Dry</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="WET">Wet</option>
+                            <option value="SAND, MUD, DIRT">Sand, Mud, Dirt</option>
+                            <option value="OTHER">Other</option>
+                            <option value="SNOW OR SLUSH">Snow Or Slush</option>
+                            <option value="ICE">Ice</option>
+                        </select>
+                    </div>
+                    <br>
+                    
+                    
+
+                    <div class="form-group">
+                        <label for="road-defect">Road Defect</label>
+                        <select class="form-control" id="road-defect" required>
+                            <option value="" selected>Choose a road defect...</option>
+                            <option value="UNKNOWN">Unknown</option>
+                            <option value="NO DEFECTS">No Defects</option>
+                            <option value="WORN SURFACE">Worn Surface</option>
+                            <option value="RUT, HOLES">Rut, Holes</option>
+                            <option value="OTHER">Other</option>
+                            <option value="SHOULDER DEFECT">Shoulder Defect</option>
+                            <option value="DEBRIS ON ROADWAY">Debris ON Roadway</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="street-direction">Street Direction</label>
+                        <select class="form-control" id="street-direction" required>
+                            <option value="" selected>Choose direction...</option>
+                            <option value="N">N</option>
+                            <option value="S">S</option>
+                            <option value="E">E</option>
+                            <option value="W">W</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="num-units">Number of Units Involved</label>
+                        <input type="number" step="1" min="1" max="18" class="form-control" name="num-units" id="num-units" value="" required>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="crash-hour">Crash Hour</label>
+                        <input type="number" step="1" min="0" max="23" class="form-control" name="crash-hour" id="crash-hour" value="" required>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="crash-day">Crash Day</label>
+                        <select class="form-control" id="crash-day" required>
+                            <option value="" selected>Choose day of the week...</option>
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                    <br>
+
+                    <div class="form-group">
+                        <label for="crash-month">Crash Month</label>
+                        <select class="form-control" id="crash-month" required>
+                            <option value="" selected>Choose month...</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+                    <br>
+
+
+                    <button class="btn btn-primary btn-block" type="submit">Predict</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
