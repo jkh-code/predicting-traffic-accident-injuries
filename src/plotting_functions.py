@@ -1,9 +1,10 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 
-from typing import Tuple
+from typing import Tuple, Union
 
 def injury_vs_no_injury_plot(
         df: pd.DataFrame,
@@ -44,7 +45,37 @@ def injury_vs_no_injury_plot(
         ax.legend(title=None, loc="upper left", bbox_to_anchor=(1, 1))
     return fig, ax
 
-def limit_injury_category_plot() -> None:
+def rewrite_yaxis_labels(
+        fig: Figure, ax: Axes, percent: bool=False, 
+        start: Union[None, int, float]=None, 
+        stop: Union[None, int, float]=None, 
+        step: Union[None, int]=None, 
+        num_points: Union[None, int]=None) -> Tuple[Figure, Axes]:
+    """"""
+    if percent:
+        range_ = np.linspace(start, stop, num_points)
+        ax.set_yticks(range_)
+        ax.set_yticklabels([f"{num*100:.0f}%" for num in range_])
+    else:
+        range_ = range(start, stop+1, step)
+        ax.set_yticks(range_)
+        ax.set_yticklabels(
+            [(f"{label/1000:.0f}k" if start >= 1_000 
+                else f"{label}") for label in range_])
+    
+    fig.tight_layout()
+    return fig, ax
+
+def save_plot(plot_name: str, notebook: bool=True) -> None:
+    if notebook:
+        path = "./../images/" + plot_name + ".png"
+    else:
+        path = "./images/" + plot_name + ".png"
+    
+    plt.savefig(path)
+    return None
+
+# def limit_injury_category_plot() -> None:
     # fig, ax = plt.subplots(figsize=(10, 7))
     # perc = (
     #     (df_crashes.groupby(["injury_category", "first_crash_type"])["crash_record_id"]
@@ -59,7 +90,7 @@ def limit_injury_category_plot() -> None:
     # ax.set_xlabel("Injury Category")
     # ax.set_ylabel("Percent of Group")
     # ax.legend(title=None, loc="upper left", bbox_to_anchor=(1, 1))
-    return None
+    # return None
 
 if __name__ == "__main__":
     pass
