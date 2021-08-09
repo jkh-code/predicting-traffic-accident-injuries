@@ -21,6 +21,56 @@ plt.style.use("ggplot")
 ModelRegressor = Union[
     LinearRegression, RandomForestRegressor, GradientBoostingRegressor]
 
+class PredictionModel:
+    """Create and implement model used for predicting results."""
+
+    def __init__(
+            self, model_path: str, scalar_path: Union[None, str]=None, 
+            encoder_path: Union[None, str]=None) -> None:
+        """Initialize PredictionModel object."""
+        self.model_ = joblib.load(model_path)
+        if scalar_path:
+            self.scalar_ = joblib.load(scalar_path)
+        if encoder_path:
+            self.encoder_ = joblib.load(encoder_path)
+        
+        return None
+    
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Transform X for use in predictions."""
+        numeric_cols = ["posted_speed_limit", "num_units", "crash_hour"]
+        category_cols = X.columns.difference(numeric_cols)
+
+        # Transform numeric columns
+        continuous = X[numeric_cols].copy()
+        X = X.drop(columns=numeric_cols)
+        scalar = self.scalar_
+        transformed = scalar.transform(continuous)
+        transformed = pd.DataFrame(transformed, columns=numeric_cols)
+        X = pd.concat([X, transformed], axis=1)
+
+        # Transform categorical columns
+        encoder = self.encoder_
+        transformed = encoder.transform(X[category_cols])
+        matrix_cols = []
+        for col, ele in zip(category_cols, encoder.categories_):
+            for e in ele:
+                matrix_cols.append(col + "_" + e.lower())
+        X = pd.concat(
+            [X[numeric_cols].reset_index(drop=True), pd.DataFrame(
+                transformed.toarray(), columns=matrix_cols)], 
+            axis=1)
+        
+        return X
+
+    def predict(self, X) -> pd.DataFrame:
+        """Predict value(s)."""
+        model = self.model_
+        y_pred = model.predict(X)
+        y_pred = np.clip(y_pred, a_min=0, a_max=None)
+        y_pred = np.round(y_pred, 0)
+        return y_pred.astype(int)
+
 def cv_regression_model(
         model: ModelRegressor, X: pd.DataFrame, y: pd.DataFrame, 
         scoring: str="neg_mean_squared_error", 
