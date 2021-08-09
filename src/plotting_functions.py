@@ -51,7 +51,7 @@ def rewrite_yaxis_labels(
         stop: Union[None, int, float]=None, 
         step: Union[None, int]=None, 
         num_points: Union[None, int]=None) -> Tuple[Figure, Axes]:
-    """"""
+    """Rewrite y-axis labels for 1000's or percentages."""
     if percent:
         range_ = np.linspace(start, stop, num_points)
         ax.set_yticks(range_)
@@ -67,12 +67,13 @@ def rewrite_yaxis_labels(
     return fig, ax
 
 def save_plot(plot_name: str, notebook: bool=True) -> None:
+    """Save plot from a jupyter notebook or script."""
     if notebook:
         path = "./../images/" + plot_name + ".png"
     else:
         path = "./images/" + plot_name + ".png"
     
-    plt.savefig(path)
+    plt.savefig(path, bbox_inches='tight')
     return None
 
 # def limit_injury_category_plot() -> None:
