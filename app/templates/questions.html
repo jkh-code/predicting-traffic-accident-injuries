@@ -15,6 +15,7 @@
             </div>
             <div class="card-body">
                 <form action="/results" method="post">
+
                     <div class="form-group">
                         <label for="speed-limit">Posted Speed Limit</label>
                         <input type="number" step="5" min="5" max="75" class="form-control" name="speed-limit" id="speed-limit" value="" required>
@@ -23,7 +24,7 @@
 
                     <div class="form-group">
                         <label for="traffic-control-device">Traffic Control Device Present</label>
-                        <select class="form-control" id="traffic-control-device" required>
+                        <select class="form-control" name="traffic-control-device" id="traffic-control-device" required>
                             <option value="" selected>Choose a traffic control device...</option>
                             <option value="NO CONTROLS">No Controls</option>
                             <option value="TRAFFIC SIGNAL">Traffic Signal</option>
@@ -50,7 +51,7 @@
 
                     <div class="form-group">
                         <label for="device-condition">Device Condition</label>
-                        <select class="form-control" id="device-condition" required>
+                        <select class="form-control" name="device-condition" id="device-condition" required>
                             <option value="" selected>Choose a device condition...</option>
                             <option value="NO CONTROLS">No Controls</option>
                             <option value="FUNCTIONING PROPERLY">Functioning Properly</option>
@@ -67,7 +68,7 @@
 
                     <div class="form-group">
                         <label for="weather-condition">Weather Condition</label>
-                        <select class="form-control" id="weather-condition" required>
+                        <select class="form-control" name="weather-condition" id="weather-condition" required>
                             <option value="" selected>Choose a weather condition...</option>
                             <option value="CLEAR">Clear</option>
                             <option value="UNKNOWN">Unknown</option>
@@ -87,7 +88,7 @@
 
                     <div class="form-group">
                         <label for="lighting-condition">Lighting Condition</label>
-                        <select class="form-control" id="lighting-condition" required>
+                        <select class="form-control" name="lighting-condition" id="lighting-condition" required>
                             <option value="" selected>Choose a lighting condition...</option>
                             <option value="DARKNESS, LIGHTED ROAD">Darkness, Lighted Road</option>
                             <option value="DUSK">Dusk</option>
@@ -101,7 +102,7 @@
 
                     <div class="form-group">
                         <label for="first-crash-type">Crash Type</label>
-                        <select class="form-control" id="first-crash-type" required>
+                        <select class="form-control" name="first-crash-type" id="first-crash-type" required>
                             <option value="" selected>Choose a crash type...</option>
                             <option value="FIXED OBJECT">Fixed Object</option>
                             <option value="ANGLE">Angle</option>
@@ -127,7 +128,7 @@
 
                     <div class="form-group">
                         <label for="trafficway-type">Trafficway Type</label>
-                        <select class="form-control" id="trafficway-type" required>
+                        <select class="form-control" name="trafficway-type" id="trafficway-type" required>
                             <option value="" selected>Choose a trafficway type...</option>
                             <option value="NOT DIVIDED">Not Divided</option>
                             <option value="FOUR WAY">Four Way</option>
@@ -155,7 +156,7 @@
 
                     <div class="form-group">
                         <label for="alignment">Roadway Alignment</label>
-                        <select class="form-control" id="alignment" required>
+                        <select class="form-control" name="alignment" id="alignment" required>
                             <option value="" selected>Choose a roadway alignment...</option>
                             <option value="STRAIGHT AND LEVEL">Straight And Level</option>
                             <option value="STRAIGHT ON GRADE">Straight On Grade</option>
@@ -169,7 +170,7 @@
 
                     <div class="form-group">
                         <label for="roadway-surface-cond">Roadway Surface Condition</label>
-                        <select class="form-control" id="roadway-surface-cond" required>
+                        <select class="form-control" name="roadway-surface-cond" id="roadway-surface-cond" required>
                             <option value="" selected>Choose a surface condition...</option>
                             <option value="DRY">Dry</option>
                             <option value="UNKNOWN">Unknown</option>
@@ -186,7 +187,7 @@
 
                     <div class="form-group">
                         <label for="road-defect">Road Defect</label>
-                        <select class="form-control" id="road-defect" required>
+                        <select class="form-control" name="road-defect" id="road-defect" required>
                             <option value="" selected>Choose a road defect...</option>
                             <option value="UNKNOWN">Unknown</option>
                             <option value="NO DEFECTS">No Defects</option>
@@ -201,7 +202,7 @@
 
                     <div class="form-group">
                         <label for="street-direction">Street Direction</label>
-                        <select class="form-control" id="street-direction" required>
+                        <select class="form-control" name="street-direction" id="street-direction" required>
                             <option value="" selected>Choose direction...</option>
                             <option value="N">N</option>
                             <option value="S">S</option>
@@ -225,7 +226,7 @@
 
                     <div class="form-group">
                         <label for="crash-day">Crash Day</label>
-                        <select class="form-control" id="crash-day" required>
+                        <select class="form-control" name="crash-day" id="crash-day" required>
                             <option value="" selected>Choose day of the week...</option>
                             <option value="Sunday">Sunday</option>
                             <option value="Monday">Monday</option>
@@ -240,7 +241,7 @@
 
                     <div class="form-group">
                         <label for="crash-month">Crash Month</label>
-                        <select class="form-control" id="crash-month" required>
+                        <select class="form-control" name="crash-month" id="crash-month" required>
                             <option value="" selected>Choose month...</option>
                             <option value="January">January</option>
                             <option value="February">February</option>
