@@ -14,7 +14,7 @@ def index():
 @app.route("/questions", methods=["GET", "POST"])
 def questions():
     """Display the questions page."""
-    return render_template("questions.html")
+    return render_template("questions.html", page_title="Form")
 
 @app.route("/results", methods=["GET", "POST"])
 def results():
@@ -44,9 +44,9 @@ def results():
         comb = np.concatenate((titles, table), axis=1)
 
         return render_template(
-            "results.html", comb=comb, result=result)
+            "results.html", comb=comb, result=result, page_title="Results")
     else:
-        return redirect(url_for("index"))
+        return redirect(url_for("index"), page_title="Welcome")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
