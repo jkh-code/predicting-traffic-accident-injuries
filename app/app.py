@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
+import numpy as np
 
 from src.model import PredictionModel
 
@@ -12,10 +13,12 @@ def index():
 
 @app.route("/questions", methods=["GET", "POST"])
 def questions():
+    """Display the questions page."""
     return render_template("questions.html")
 
 @app.route("/results", methods=["GET", "POST"])
 def results():
+    """Display the results page."""
     if request.method == "POST":
         # Convert HTML names to model names
         answers_d = dict()
@@ -30,11 +33,18 @@ def results():
         encoder_path = "./models/encoder.pkl"
         prediction_model = PredictionModel(
             model_path, scalar_path, encoder_path)
-        X = prediction_model.transform(X)
-        y_pred = prediction_model.predict(X)
-        print(y_pred)
+        X_transformed = prediction_model.transform(X)
+        y_pred = prediction_model.predict(X_transformed)
 
-        return render_template("results.html")
+        cols = X.columns.to_list()
+        cols = [col.replace("_", " ").title() for col in cols]
+        table = X.values.reshape(-1, 1)
+        titles = np.array(cols).reshape(-1, 1)
+        result = y_pred
+        comb = np.concatenate((titles, table), axis=1)
+
+        return render_template(
+            "results.html", comb=comb, result=result)
     else:
         return redirect(url_for("index"))
 

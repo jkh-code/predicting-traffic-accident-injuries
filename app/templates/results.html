@@ -14,7 +14,43 @@
                 <h4 class="my-0 font-weight-normal text-center">Predicted Number of Injuries</h4>
             </div>
             <div class="card-body">
-                <p>Hello!</p>
+                <h5 class="my-0 font-weight-normal">Input Values</h3>
+                <br>
+                
+                <table class="table">
+                    <thead>
+                        <th scope="col">Feature</th>
+                        <th scope="col">Value</th>
+                    </thead>
+                    <tbody>
+                        {% for x, y in comb %}
+                            <tr>
+                                <td>{{ x }}</td>
+                                <td>{{ y }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br><br>
+
+                <h5 class="my-0 font-weight-normal">Prediction</h3>
+                <br>
+
+                <table class="table">
+                    <thead>
+                        <th scope="col">Number of Injuries</th>
+                    </thead>
+                    <tbody>
+                        {% for x in result %}
+                            <tr>
+                                <td>{{ x }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <a class="btn btn-primary" href="{{ url_for('index') }}" role="button">Home</a>
+                <a class="btn btn-primary" href="{{ url_for('questions') }}" role="button">Predict</a>
             </div>
         </div>
     </div>
