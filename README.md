@@ -133,7 +133,11 @@ Accidents on roads oriented south may lead to accidents with higher numbers of i
 
 
 ## Predictive Modeling
+Linear regression, random forest regression, and gradient boosted regression will be the three models evaluated for their impact on predicting the number of injuries per crash. Root mean square error (RMSE) will be used to evaluate the effectiveness of each model because it provides a measure of how far off a model is on average. The closer RMSE is to zero, the better a model.
 
+From the EDA, the majority of crashes have zero injuries and of the crashes that have injuries, over 75% of them have one injury. To deal with this imbalanced data two sets of models will be explored: lone regression models that are trained on the full set of data and a custom, ensemble model where the classifier model is trained on the full set of data and will classify an accident as having injuries or no injuries and the regression model is trained on accidents that have injuries and will return the number of injuries if the classifier models predicts injuries. The model with the best performance will be selected for refinement. Furthermore, before creating the ensemble model, the lone regression models will be trained on injury-only data to determine if building the full model is worthwhile.
+
+The models will also be trained on two different sets of data. The first set of data will be data from the crashes dataset. The second set of data will be data from the crashes dataset joined with data from the peoples dataset. The model and data combination that returns the best performance will be used.
 
 
 
