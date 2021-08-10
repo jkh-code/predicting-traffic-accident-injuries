@@ -31,7 +31,7 @@ export PG_PASSWORD="my password"
 Add the following path to your Python paths to allow for importing the `make_postgres_conn()` and `make_alchemy_engine()` functions from the *src* folder.
 
 ```sh
-export PYTHONPATH=$PYTHONPATH:$/my/path/to/predicting-covid-19-deaths/src/
+export PYTHONPATH=$PYTHONPATH:$/my/path/to/predicting-traffic-accident-injuries/src/
 ```
 
 ## Data
@@ -62,3 +62,6 @@ The *Predicted Number of Injuries* page provides a prediction and prints the inp
 ![](./images/results-page.png)
 
 ## Next Steps
+- Examine the assumptions of linear regression to determine if the model can be used for inference.
+- Conduct in-depth feature engineering.
+- Add more features to the web app.
