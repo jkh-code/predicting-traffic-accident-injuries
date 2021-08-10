@@ -126,7 +126,7 @@ A higher frequency of injury accidents seem to occur on lighted roads at night.
 
 ![](./images/percent-accidents-by-lighting-condition.png)
 
-Accidents on roads oriented south may lead to higher-degree-injury accidents.
+Accidents on roads oriented south may lead to accidents with higher numbers of injuries.
 
 ![](./images/percent-accidents-by-street-direction.png)
 
