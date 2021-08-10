@@ -142,7 +142,36 @@ The models will also be trained on two different sets of data. The first set of 
 
 
 ## Results
+The table below contains the results from training the models. The row highlighted in bold contains the best performing models.
 
+| Training Data | Dummy Model | Linear Reg. | Random Forest | Gradient Boosted Reg. |
+| --- | --- | --- | --- | --- |
+| **Injury/Non-injury data, no extra columns** | **0.5560** | **0.5153** | **0.5267** | **0.5107** |
+| Injury/Non-injury data, extra columns| 0.5473 | 0.5153 | 0.5270 | 0.5111 |
+| Injury-only data, no extra columns | 0.8363 | 0.7884 | 0.8077 | 0.7842 |
+| Injury-only data, extra columns | 0.8243 | 0.7890 | 0.8056 | 0.7852 |
+
+From the table above:
+- The best performing set of models are from the dataset that contains injury and non-injury data and does not contain additional columns from the peoples dataset.
+- Adding data from the peoples dataset either did not improve performance or it made performance worse.
+- Training the regression models on injury-only data made the models perform worse. This means it is not worth while to pursue the ensemble model because assuming the classifier model correctly guesses every prediction, which is unlikely, the regressor model still has worse performance.
+
+To determine the best model, refer to the table below. While Gradient Boosted Regression has a better RMSE, the training time and prediction time for the linear regression model are lower. The difference in RMSE between the two models is also very close despite Gradient Boosted Regression performing slightly better. Therefore, the linear regression model is chose due to its lower prediction time and not that much different RMSE.
+
+| Model | RMSE | Training Time (sec) | Prediction Time (sec) |
+| --- | --- | --- | --- |
+| Linear Regression | 0.5153 | 2.06 | 0.09 |
+| Gradient Boosted Reg. | 0.5107 | 142 | 0.66 |
+
+To optimise the linear regression model, a lasso linear model was trained with cross validation to determine the optimum model and the least important features for predicting. The performance of this model are given in the table below, and the plot below the table illustrates the optimum alpha on a plot of the betas versus alpha. The optimum alpha value disregards 40 features and retains 89 features from the transformed data.
+
+| Model | alpha | RMSE | Prediction Time (sec) |
+| --- | --- | --- | --- |
+| Lasso Regression | 3.27e-5 | 0.5111 | 0.09 |
+
+![](./images/lasso-regression-beta-alpha-plot-final.png)
+
+The lasso regression model slightly improves the RMSE and does not change the prediction time. For the web app, the lasso regression model will be implemented for predictions because of its slightly better RMSE.
 
 
 
