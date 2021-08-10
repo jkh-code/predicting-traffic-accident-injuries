@@ -10,9 +10,24 @@
                 <h4 class="my-0 font-weight-normal text-center">Predicted Number of Injuries</h4>
             </div>
             <div class="card-body">
+                <h5 class="my-0 font-weight-normal">Prediction</h3>
+                    <br>
+                    <table class="table">
+                        <thead>
+                            <th scope="col">Number of Injuries</th>
+                        </thead>
+                        <tbody>
+                            {% for x in result %}
+                                <tr>
+                                    <td>{{ x }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                <br><br>
+
                 <h5 class="my-0 font-weight-normal">Input Values</h3>
                 <br>
-                
                 <table class="table">
                     <thead>
                         <th scope="col">Feature</th>
@@ -23,23 +38,6 @@
                             <tr>
                                 <td>{{ x }}</td>
                                 <td>{{ y }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <br><br>
-
-                <h5 class="my-0 font-weight-normal">Prediction</h3>
-                <br>
-
-                <table class="table">
-                    <thead>
-                        <th scope="col">Number of Injuries</th>
-                    </thead>
-                    <tbody>
-                        {% for x in result %}
-                            <tr>
-                                <td>{{ x }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
