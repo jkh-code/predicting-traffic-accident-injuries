@@ -17,7 +17,7 @@
 
 
 ## Background
-TBD
+The purpose of this project is to produce a web app that emergency services can use to determine the number of people injured in a traffic accident. After knowing the number of people injured, emergency services can take the appropriate action. With this tool, emergency services can better direct their limited resources.
 
 
 
