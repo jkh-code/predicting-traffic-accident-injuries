@@ -1,4 +1,4 @@
-# Predicting the Number of Traffic Accident Injuries in Chicago
+# Predicting the Number of Injuries in Traffic Accidents
 
 <p align="center">
   <a href="https://docs.google.com/presentation/d/1B-hyiECES9hVwE_pFt_3S2yOYE50hHYFjUbzlUWvU2Q/edit?usp=sharing">Presentation</a>
