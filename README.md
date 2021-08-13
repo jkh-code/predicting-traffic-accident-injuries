@@ -154,7 +154,7 @@ The table below contains the results from training the models. The row highlight
 From the table above:
 - The best performing set of models are from the dataset that contains injury and non-injury data and does not contain additional columns from the peoples dataset.
 - Adding data from the peoples dataset either did not improve performance or it made performance worse.
-- Training the regression models on injury-only data made the models perform worse. This means it is not worth while to pursue the ensemble model because assuming the classifier model correctly guesses every prediction, which is unlikely, the regressor model still has worse performance.
+- Training the regression models on injury-only data made the models perform worse. While this is not an indication the ensemble model will perform worse, the high RMSE of these regression models gives pause and given the limited amount of time to developed this project, the ensemble method will not be perused at this time.
 
 To determine the best model, refer to the table below. While Gradient Boosted Regression has a better RMSE, the training time and prediction time for the linear regression model are lower. The difference in RMSE between the two models is also very close despite Gradient Boosted Regression performing slightly better. Therefore, the linear regression model is chose due to its lower prediction time and not that much different RMSE.
 
@@ -195,4 +195,5 @@ The *Predicted Number of Injuries* page provides a prediction and prints the inp
 ## Next Steps
 - Examine the assumptions of linear regression to determine if the model can be used for inference.
 - Conduct in-depth feature engineering.
-- Add more features to the web app.
+- Build the full ensemble method to determine its true performance.
+- Add more robust form validation than what is currently present in the web app.
